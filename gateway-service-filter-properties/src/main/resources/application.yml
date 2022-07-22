@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: employeeModule
+        uri: http://localhost:8081/
+        predicates:
+        - Path=/employee/**
+        filters:
+        - AddRequestHeader=first-request, first-request-header
+        - AddResponseHeader=first-response, first-response-header
+      - id: consumerModule
+        uri: http://localhost:8082/
+        predicates:
+        - Path=/consumer/**
+        filters:
+        - AddRequestHeader=second-request, second-request-header
+        - AddResponseHeader=second-response, second-response-header
+      default-filters: GatewayCustomFilter
