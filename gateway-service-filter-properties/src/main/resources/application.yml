@@ -19,4 +19,3 @@ spring:
         filters:
         - AddRequestHeader=second-request, second-request-header
         - AddResponseHeader=second-response, second-response-header
-      default-filters: GatewayCustomFilter

@@ -2,6 +2,8 @@ package com.javainuse.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.filter.factory.rewrite.ModifyResponseBodyGatewayFilterFactory;
 import org.springframework.core.Ordered;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.io.ByteArrayOutputStream;
@@ -37,8 +40,6 @@ public class GatewayCustomFilter extends AbstractGatewayFilterFactory<GatewayCus
     public GatewayFilter apply(Config config) {
         final ModifyResponseBodyGatewayFilterFactory.Config modifyResponseBodyFilterFactoryConfig = new ModifyResponseBodyGatewayFilterFactory.Config();
         modifyResponseBodyFilterFactoryConfig.setRewriteFunction(String.class, String.class, (swe, bodyAsString) -> {
-            printBody(swe.getRequest());
-
             var request = swe.getRequest();
             log.info("Url: {}", request.getURI().getPath());
             String ipAddress = request.getHeaders().getFirst("X-FORWARDED-FOR");
