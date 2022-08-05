@@ -17,4 +17,9 @@ public class FirstController {
 		System.out.println(header);
 		return "Hello JavaInUse Called in First Service";
 	}
+
+	@PostMapping("/message2")
+	public void testPostVoid(@RequestHeader("first-request") String header) {
+		System.out.println(header);
+	}
 }

@@ -71,12 +71,19 @@ public class LoggingWebFilter implements WebFilter {
                         log.info("requestId: {}, method: {}, url: {}, \nresponse body :{}", request.getId(), request.getMethodValue(), request.getURI(), responseBody);
 
                         return dataBufferFactory.wrap(responseBody.getBytes());
-                    })).onErrorResume(err -> {
+                    })
+                    .switchIfEmpty(Flux.defer(() -> {
 
+                        System.out.println("Write to database here");
+                        return Flux.just();
+                    }))
+                    ).onErrorResume(err -> {
                         log.error("error while decorating Response: {}", err.getMessage());
                         return Mono.empty();
                     });
 
+                } else {
+                    System.out.println("2000000000");
                 }
                 return super.writeWith(body);
             }
