@@ -2,23 +2,12 @@ package com.javainuse.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.filter.factory.rewrite.ModifyResponseBodyGatewayFilterFactory;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.channels.Channels;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Project: MSA-springboot-eureka.<br/>
@@ -60,38 +49,6 @@ public class GatewayCustomFilter extends AbstractGatewayFilterFactory<GatewayCus
             return Mono.just(bodyAsString);
         });
         return modifyResponseBodyFilterFactory.apply(modifyResponseBodyFilterFactoryConfig);
-    }
-
-    /**
-     * print log request body
-     *
-     * @param serverHttpRequest request
-     */
-    private void printBody(ServerHttpRequest serverHttpRequest) {
-        var method = serverHttpRequest.getMethod();
-        serverHttpRequest.getBody().subscribe(dataBuffer -> {
-            if (method != null && HttpMethod.POST.name().equalsIgnoreCase(method.name())) {
-                bufferWriterLog(dataBuffer);
-            }
-        });
-    }
-
-    private void bufferWriterLog(DataBuffer dataBuffer) {
-        log.info("AAAAAAAAAAAAAAAAAAAAAAAa");
-        ByteArrayOutputStream baocs = new ByteArrayOutputStream();
-        try {
-            Channels.newChannel(baocs).write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
-            String body = baocs.toString(StandardCharsets.UTF_8);
-            log.info("Request: payload={}", body);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                baocs.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     /**
